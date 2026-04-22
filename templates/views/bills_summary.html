@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Bills Summary{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Bills Summary</h1>
+    <p class="text-muted">Patient billing records and payment status</p>
+    
+    {% if bills %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Bill Date</th>
+                    <th>Total Amount</th>
+                    <th>Itemized Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in bills %}
+                <tr>
+                    <td>{{ bill.patient_name }}</td>
+                    <td>{{ bill.created_at.strftime('%Y-%m-%d') if bill.created_at else 'N/A' }}</td>
+                    <td>LKR {{ "%.2f"|format(bill.total_amount) }}</td>
+                    <td>LKR {{ "%.2f"|format(bill.itemized_total or 0) }}</td>
+                    <td>
+                        {% if bill.status == 'paid' %}
+                        <span class="badge bg-success">Paid</span>
+                        {% elif bill.status == 'partial' %}
+                        <span class="badge bg-warning">Partial</span>
+                        {% else %}
+                        <span class="badge bg-danger">Unpaid</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No bills found.</div>
+    {% endif %}
+</div>
+{% endblock %}

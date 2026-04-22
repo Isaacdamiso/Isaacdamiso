@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Low Stock Alert Banner -->
+{% if low_stock_items %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <h5><i class="fas fa-exclamation-triangle"></i> Pharmacy Alert: Low Stock Medications!</h5>
+  <p><strong>{{ low_stock_items | length }} medications</strong> are running low and need immediate attention:</p>
+  <ul class="mb-2">
+    {% for item in low_stock_items[:5] %}  <!-- Show first 5 items -->
+      <li><strong>{{ item.medication.name }}</strong> - Only {{ item.quantity_in_stock }} units remaining</li>
+    {% endfor %}
+    {% if low_stock_items | length > 5 %}
+      <li><em>...and {{ (low_stock_items | length) - 5 }} more items</em></li>
+    {% endif %}
+  </ul>
+  <a href="{{ url_for('main.pharmacy_inventory') }}" class="btn btn-danger btn-sm">View Inventory</a>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="list-group">
+      <a href="{{ url_for('main.patients') }}" class="list-group-item list-group-item-action">Patients</a>
+      <a href="{{ url_for('main.doctors') }}" class="list-group-item list-group-item-action">Doctors</a>
+      <a href="{{ url_for('main.nurses') }}" class="list-group-item list-group-item-action">Nurses</a>
+      <a href="{{ url_for('main.pharmacists') }}" class="list-group-item list-group-item-action">Pharmacists</a>
+      <a href="{{ url_for('main.workers') }}" class="list-group-item list-group-item-action">General Workers</a>
+      <a href="{{ url_for('main.appointments') }}" class="list-group-item list-group-item-action">Appointments</a>
+      <a href="{{ url_for('main.medications') }}" class="list-group-item list-group-item-action">Medications</a>
+      <a href="{{ url_for('main.prescriptions') }}" class="list-group-item list-group-item-action">Prescriptions</a>
+      <a href="{{ url_for('main.pharmacy_inventory') }}" class="list-group-item list-group-item-action">
+        Pharmacy Inventory
+        {% if low_stock_items %}
+          <span class="badge bg-danger ms-2">{{ low_stock_items | length }}</span>
+        {% endif %}
+      </a>
+      <a href="{{ url_for('main.dispensing_records') }}" class="list-group-item list-group-item-action">Dispensing Records</a>
+      <a href="{{ url_for('main.bills') }}" class="list-group-item list-group-item-action">Bills</a>
+      <a href="{{ url_for('main.salaries') }}" class="list-group-item list-group-item-action">Staff Salaries</a>
+      <a href="{{ url_for('main.departments') }}" class="list-group-item list-group-item-action">Departments</a>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">System Overview</h5>
+        <p class="card-text">Complete hospital management system including patient records, staff management, appointments, medications, prescriptions, and billing.</p>
+        
+        <!-- Quick Stats -->
+        <div class="row text-center mt-3">
+          <div class="col-6">
+            <div class="border rounded p-2">
+              <h6 class="mb-1">{{ low_stock_items | length }}</h6>
+              <small class="text-muted">Low Stock Items</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="border rounded p-2">
+              <h6 class="mb-1">9</h6>
+              <small class="text-muted">Salary Records</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

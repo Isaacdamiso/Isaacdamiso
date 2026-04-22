@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Hospital Reports & Analytics</h2>
+
+<div class="row mt-4">
+  <!-- Patient Statistics -->
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-users"></i> Patient Statistics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <h3 class="text-primary">{{ reports.patient_stats.total_patients }}</h3>
+            <p class="mb-0">Total Patients</p>
+          </div>
+          <div class="col-6">
+            <h3 class="text-info">{{ reports.appointment_stats.upcoming_appointments }}</h3>
+            <p class="mb-0">Upcoming Appointments</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pharmacy Statistics -->
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-pills"></i> Pharmacy Statistics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-4">
+            <h3 class="text-success">{{ reports.pharmacy_stats.total_medications }}</h3>
+            <p class="mb-0">Medications</p>
+          </div>
+          <div class="col-4">
+            <h3 class="text-warning">{{ reports.pharmacy_stats.low_stock_items }}</h3>
+            <p class="mb-0">Low Stock</p>
+          </div>
+          <div class="col-4">
+            <h3 class="text-info">${{ "%.2f"|format(reports.pharmacy_stats.total_inventory_value) }}</h3>
+            <p class="mb-0">Inventory Value</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Billing Statistics -->
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-dollar-sign"></i> Billing Statistics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <h3 class="text-success">${{ "%.2f"|format(reports.billing_stats.total_revenue) }}</h3>
+            <p class="mb-0">Total Revenue</p>
+          </div>
+          <div class="col-6">
+            <h3 class="text-info">${{ "%.2f"|format(reports.billing_stats.avg_bill_amount) }}</h3>
+            <p class="mb-0">Avg Bill Amount</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff Statistics -->
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-user-md"></i> Staff Statistics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-3">
+            <h4 class="text-primary">{{ reports.staff_stats.total_doctors }}</h4>
+            <p class="mb-0">Doctors</p>
+          </div>
+          <div class="col-3">
+            <h4 class="text-info">{{ reports.staff_stats.total_nurses }}</h4>
+            <p class="mb-0">Nurses</p>
+          </div>
+          <div class="col-3">
+            <h4 class="text-success">{{ reports.staff_stats.total_pharmacists }}</h4>
+            <p class="mb-0">Pharmacists</p>
+          </div>
+          <div class="col-3">
+            <h4 class="text-secondary">{{ reports.staff_stats.total_workers }}</h4>
+            <p class="mb-0">Workers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+  <div class="card-header">
+    <h5>Quick Actions</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-3">
+        <a href="{{ url_for('main.bills') }}?export=1" class="btn btn-outline-primary btn-block">
+          <i class="fas fa-download"></i> Export Bills
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{{ url_for('main.backup') }}" class="btn btn-outline-secondary btn-block">
+          <i class="fas fa-database"></i> Backup Database
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{{ url_for('main.api_dashboard_stats') }}" class="btn btn-outline-info btn-block">
+          <i class="fas fa-chart-line"></i> API Stats
+        </a>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-outline-success btn-block" onclick="window.print()">
+          <i class="fas fa-print"></i> Print Report
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

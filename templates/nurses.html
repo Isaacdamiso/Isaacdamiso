@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Nurses</h2>
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <input name="name" class="form-control" placeholder="Nurse name" required>
+  </div>
+  <div class="col-md-2">
+    <input name="license_number" class="form-control" placeholder="License #" required>
+  </div>
+  <div class="col-md-2">
+    <input name="phone" class="form-control" placeholder="Phone">
+  </div>
+  <div class="col-md-2">
+    <select name="department_id" class="form-select">
+      <option value="">Select Department</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}">{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>License #</th><th>Department</th><th>Phone</th></tr></thead>
+  <tbody>
+    {% for n in nurses %}
+      <tr>
+        <td>{{ n.id }}</td>
+        <td>{{ n.name }}</td>
+        <td>{{ n.license_number }}</td>
+        <td>{{ n.department.name if n.department else '' }}</td>
+        <td>{{ n.phone or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No nurses</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

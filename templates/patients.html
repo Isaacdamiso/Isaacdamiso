@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Patients</h2>
+
+<!-- Search Form -->
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-8">
+    <input name="search" class="form-control" placeholder="Search patients by name or phone..." value="{{ search_query }}">
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-outline-secondary">Search</button>
+  </div>
+  <div class="col-md-2">
+    <a href="{{ url_for('main.patients') }}" class="btn btn-outline-info">Clear</a>
+  </div>
+</form>
+
+<!-- Add Patient Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <input name="first_name" class="form-control" placeholder="First name" required>
+  </div>
+  <div class="col-md-4">
+    <input name="last_name" class="form-control" placeholder="Last name" required>
+  </div>
+  <div class="col-md-3">
+    <input name="phone" class="form-control" placeholder="Phone">
+  </div>
+  <div class="col-md-1">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Prescriptions</th><th>Bills</th></tr></thead>
+  <tbody>
+    {% for p in patients %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.first_name }} {{ p.last_name }}</td>
+        <td>{{ p.phone or '' }}</td>
+        <td>
+          {% if p.prescriptions %}
+            {% for prescription in p.prescriptions %}
+              <small class="badge bg-info">{{ prescription.medication.name }} ({{ prescription.dosage }})</small><br>
+            {% endfor %}
+          {% else %}
+            <small class="text-muted">No prescriptions</small>
+          {% endif %}
+        </td>
+        <td>
+          {% if p.bills %}
+            {% for bill in p.bills %}
+              <small class="badge bg-{{ 'success' if bill.status == 'paid' else 'warning' if bill.status == 'partial' else 'danger' }}">
+                ${{ "%.2f"|format(bill.total_amount) }} ({{ bill.status }})
+              </small><br>
+            {% endfor %}
+          {% else %}
+            <small class="text-muted">No bills</small>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No patients</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

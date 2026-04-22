@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Active Appointments{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Active Appointments</h1>
+    <p class="text-muted">Upcoming scheduled appointments sorted by date</p>
+    
+    {% if appointments %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Appointment ID</th>
+                    <th>Scheduled Date/Time</th>
+                    <th>Patient Name</th>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>{{ appt.appointment_id }}</td>
+                    <td>{{ appt.scheduled_at.strftime('%Y-%m-%d %H:%M') if appt.scheduled_at else 'N/A' }}</td>
+                    <td>{{ appt.patient_name }}</td>
+                    <td>{{ appt.doctor_info }}</td>
+                    <td><span class="badge bg-primary">{{ appt.department }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No active appointments found.</div>
+    {% endif %}
+</div>
+{% endblock %}

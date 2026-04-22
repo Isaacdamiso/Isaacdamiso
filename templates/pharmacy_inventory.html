@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Pharmacy Inventory</h2>
+
+<!-- Low Stock Alerts -->
+{% set low_stock_items = [] %}
+{% set well_stocked_count = 0 %}
+{% for item in inventory %}
+  {% if item.quantity_in_stock <= item.reorder_level %}
+    {% set _ = low_stock_items.append(item) %}
+  {% else %}
+    {% set well_stocked_count = well_stocked_count + 1 %}
+  {% endif %}
+{% endfor %}
+{% if low_stock_items %}
+<div class="alert alert-warning" role="alert">
+  <h5><i class="fas fa-exclamation-triangle"></i> Low Stock Alert!</h5>
+  <p>The following medications are running low and need to be reordered:</p>
+  <ul class="mb-0">
+    {% for item in low_stock_items %}
+      <li><strong>{{ item.medication.name }}</strong> - Only {{ item.quantity_in_stock }} units left (Reorder at {{ item.reorder_level }})</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- Inventory Summary -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">{{ inventory | length }}</h5>
+        <p class="card-text">Total Medications</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-danger">{{ low_stock_items | length }}</h5>
+        <p class="card-text">Low Stock Items</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-success">{{ well_stocked_count }}</h5>
+        <p class="card-text">Well Stocked</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">{{ inventory | map(attribute='quantity_in_stock') | sum }}</h5>
+        <p class="card-text">Total Units</p>
+      </div>
+    </div>
+  </div>
+</div>
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <select name="medication_id" class="form-select" required>
+      <option value="">Select Medication</option>
+      {% for med in medications %}
+        <option value="{{ med.id }}">{{ med.name }} (${{ "%.2f"|format(med.unit_price) }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <input name="quantity_in_stock" type="number" class="form-control" placeholder="Stock Qty" required>
+  </div>
+  <div class="col-md-2">
+    <input name="reorder_level" type="number" class="form-control" placeholder="Reorder Level" value="10" required>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary">Update Inventory</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Medication</th><th>Stock Qty</th><th>Reorder Level</th><th>Status</th><th>Last Updated</th></tr></thead>
+  <tbody>
+    {% for item in inventory %}
+      <tr class="{% if item.quantity_in_stock <= item.reorder_level %}table-warning{% endif %}">
+        <td>{{ item.id }}</td>
+        <td>{{ item.medication.name }}</td>
+        <td>
+          {% if item.quantity_in_stock <= item.reorder_level %}
+            <span class="text-danger font-weight-bold">{{ item.quantity_in_stock }}</span>
+          {% else %}
+            {{ item.quantity_in_stock }}
+          {% endif %}
+        </td>
+        <td>{{ item.reorder_level }}</td>
+        <td>
+          {% if item.quantity_in_stock <= item.reorder_level %}
+            <span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Low Stock</span>
+          {% elif item.quantity_in_stock <= item.reorder_level * 1.5 %}
+            <span class="badge bg-warning">Getting Low</span>
+          {% else %}
+            <span class="badge bg-success">In Stock</span>
+          {% endif %}
+        </td>
+        <td>{{ item.last_updated.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6">No inventory items</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

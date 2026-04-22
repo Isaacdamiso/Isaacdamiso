@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Doctors</h2>
+
+<!-- Search Form -->
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <input name="search" class="form-control" placeholder="Search by name..." value="{{ search_query }}">
+  </div>
+  <div class="col-md-3">
+    <input name="specialty" class="form-control" placeholder="Filter by specialty..." value="{{ search_specialty }}">
+  </div>
+  <div class="col-md-3">
+    <select name="department" class="form-select">
+      <option value="">All Departments</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}" {% if dept.id|string == search_dept %}selected{% endif %}>{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Search</button>
+    <a href="{{ url_for('main.doctors') }}" class="btn btn-outline-info w-100 mt-2">Clear</a>
+  </div>
+</form>
+
+<!-- Add Doctor Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <input name="name" class="form-control" placeholder="Doctor name" required>
+  </div>
+  <div class="col-md-3">
+    <input name="specialty" class="form-control" placeholder="Specialty">
+  </div>
+  <div class="col-md-3">
+    <select name="department_id" class="form-select">
+      <option value="">Select Department</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}">{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Specialty</th><th>Department</th><th>Appointments</th></tr></thead>
+  <tbody>
+    {% for d in doctors %}
+      <tr>
+        <td>{{ d.id }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.specialty or '' }}</td>
+        <td>{{ d.department.name if d.department else '' }}</td>
+        <td>
+          {% if d.appointments %}
+            {% for appt in d.appointments %}
+              <small class="badge bg-success">{{ appt.patient.first_name }} {{ appt.patient.last_name }} ({{ appt.scheduled_at.strftime('%Y-%m-%d') }})</small><br>
+            {% endfor %}
+          {% else %}
+            <small class="text-muted">No appointments</small>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No doctors</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

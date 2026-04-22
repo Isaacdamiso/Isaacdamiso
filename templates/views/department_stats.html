@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Department Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Department Statistics</h1>
+    <p class="text-muted">Staff and appointment counts by department</p>
+    
+    {% if departments %}
+    <div class="row">
+        {% for dept in departments %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>{{ dept.department_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Doctors</h6>
+                            <h3 class="text-primary">{{ dept.doctor_count or 0 }}</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Nurses</h6>
+                            <h3 class="text-info">{{ dept.nurse_count or 0 }}</h3>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Workers</h6>
+                            <h3 class="text-warning">{{ dept.worker_count or 0 }}</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Appointments</h6>
+                            <h3 class="text-success">{{ dept.total_appointments or 0 }}</h3>
+                        </div>
+                    </div>
+                    <div class="alert alert-light mt-3 mb-0">
+                        <small><strong>Total Staff:</strong> {{ (dept.doctor_count or 0) + (dept.nurse_count or 0) + (dept.worker_count or 0) }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="alert alert-info">No department data found.</div>
+    {% endif %}
+</div>
+{% endblock %}

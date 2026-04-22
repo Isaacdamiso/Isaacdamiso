@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Prescriptions</h2>
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-2">
+    <select name="patient_id" class="form-select" required>
+      <option value="">Select Patient</option>
+      {% for p in patients %}
+        <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="doctor_id" class="form-select" required>
+      <option value="">Select Doctor</option>
+      {% for d in doctors %}
+        <option value="{{ d.id }}">{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="medication_id" class="form-select" required>
+      <option value="">Select Medication</option>
+      {% for m in medications %}
+        <option value="{{ m.id }}">{{ m.name }} (${{ "%.2f"|format(m.unit_price) }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-1">
+    <input name="dosage" class="form-control" placeholder="Dosage" required>
+  </div>
+  <div class="col-md-1">
+    <input name="frequency" class="form-control" placeholder="Frequency" required>
+  </div>
+  <div class="col-md-1">
+    <input name="duration_days" type="number" class="form-control" placeholder="Days" value="7" required>
+  </div>
+  <div class="col-md-2">
+    <input name="notes" class="form-control" placeholder="Notes">
+  </div>
+  <div class="col-md-1">
+    <button class="btn btn-primary">Prescribe</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Medication</th><th>Dosage</th><th>Frequency</th><th>Duration</th><th>Date</th></tr></thead>
+  <tbody>
+    {% for p in prescriptions %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.patient.first_name }} {{ p.patient.last_name }}</td>
+        <td>{{ p.doctor.name }}</td>
+        <td>{{ p.medication.name }}</td>
+        <td>{{ p.dosage }}</td>
+        <td>{{ p.frequency }}</td>
+        <td>{{ p.duration_days }} days</td>
+        <td>{{ p.prescribed_at.strftime('%Y-%m-%d') }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8">No prescriptions</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

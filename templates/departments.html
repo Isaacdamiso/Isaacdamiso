@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Departments</h2>
+
+<!-- Search Form -->
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-8">
+    <input name="search" class="form-control" placeholder="Search department..." value="{{ search_query }}">
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Search</button>
+  </div>
+  <div class="col-md-2">
+    <a href="{{ url_for('main.departments') }}" class="btn btn-outline-info w-100">Clear</a>
+  </div>
+</form>
+
+<!-- Add Department Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-8">
+    <input name="name" class="form-control" placeholder="Department name" required>
+  </div>
+  <div class="col-md-4">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Staff Members</th></tr></thead>
+  <tbody>
+    {% for d in departments %}
+      <tr>
+        <td>{{ d.id }}</td>
+        <td>{{ d.name }}</td>
+        <td>
+          {% if d.doctors or d.nurses or d.workers or d.pharmacists %}
+            {% for doctor in d.doctors %}
+              <small class="badge bg-primary">{{ doctor.name }} (Doctor - {{ doctor.specialty }})</small><br>
+            {% endfor %}
+            {% for nurse in d.nurses %}
+              <small class="badge bg-info">{{ nurse.name }} (Nurse - {{ nurse.license_number }})</small><br>
+            {% endfor %}
+            {% for pharmacist in d.pharmacists %}
+              <small class="badge bg-warning">{{ pharmacist.name }} (Pharmacist - {{ pharmacist.license_number }})</small><br>
+            {% endfor %}
+            {% for worker in d.workers %}
+              <small class="badge bg-secondary">{{ worker.name }} ({{ worker.position }})</small><br>
+            {% endfor %}
+          {% else %}
+            <small class="text-muted">No staff members</small>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="3">No departments</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

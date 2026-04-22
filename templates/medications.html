@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Medications</h2>
+
+<!-- Bulk Import Form -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5>Bulk Import Medications</h5>
+  </div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('main.bulk_import_medications') }}" class="row g-3">
+      <div class="col-md-8">
+        <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+        <small class="form-text text-muted">
+          CSV format: name,description,unit_price (header required)
+        </small>
+      </div>
+      <div class="col-md-4">
+        <button class="btn btn-success">Import CSV</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Single Medication Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <input name="name" class="form-control" placeholder="Medication name" required>
+  </div>
+  <div class="col-md-4">
+    <input name="description" class="form-control" placeholder="Description">
+  </div>
+  <div class="col-md-2">
+    <input name="unit_price" type="number" step="0.01" class="form-control" placeholder="Unit price" required>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary">Add Medication</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Unit Price</th></tr></thead>
+  <tbody>
+    {% for m in medications %}
+      <tr>
+        <td>{{ m.id }}</td>
+        <td>{{ m.name }}</td>
+        <td>{{ m.description or '' }}</td>
+        <td>${{ "%.2f"|format(m.unit_price) }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4">No medications</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

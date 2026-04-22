@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Staff Salaries</h2>
+
+<!-- Add New Salary Form -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5>Record New Salary Payment</h5>
+  </div>
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      <div class="col-md-3">
+        <select name="staff_type" class="form-select" id="staffType" required>
+          <option value="">Select Staff Type</option>
+          <option value="doctor">Doctor</option>
+          <option value="nurse">Nurse</option>
+          <option value="pharmacist">Pharmacist</option>
+          <option value="worker">General Worker</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="staff_id" class="form-select" id="staffId" required>
+          <option value="">Select Staff Member</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input name="base_salary" type="number" step="0.01" class="form-control" placeholder="Base Salary" required>
+      </div>
+      <div class="col-md-2">
+        <input name="bonuses" type="number" step="0.01" class="form-control" placeholder="Bonuses" value="0.00">
+      </div>
+      <div class="col-md-2">
+        <input name="deductions" type="number" step="0.01" class="form-control" placeholder="Deductions" value="0.00">
+      </div>
+      <div class="col-md-3">
+        <input name="payment_date" type="date" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <input name="payment_period_start" type="date" class="form-control" placeholder="Period Start" required>
+      </div>
+      <div class="col-md-3">
+        <input name="payment_period_end" type="date" class="form-control" placeholder="Period End" required>
+      </div>
+      <div class="col-md-6">
+        <input name="notes" class="form-control" placeholder="Notes">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary">Record Salary</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Salaries List -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Staff Member</th>
+      <th>Department</th>
+      <th>Base Salary</th>
+      <th>Bonuses</th>
+      <th>Deductions</th>
+      <th>Net Salary</th>
+      <th>Payment Date</th>
+      <th>Period</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for salary in salaries %}
+      <tr>
+        <td>{{ salary.id }}</td>
+        <td>{{ salary.staff_name }}</td>
+        <td>{{ salary.department_name }}</td>
+        <td>${{ "%.2f"|format(salary.base_salary) }}</td>
+        <td>${{ "%.2f"|format(salary.bonuses) }}</td>
+        <td>${{ "%.2f"|format(salary.deductions) }}</td>
+        <td><strong>${{ "%.2f"|format(salary.net_salary) }}</strong></td>
+        <td>{{ salary.payment_date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ salary.payment_period_start.strftime('%m/%d') }} - {{ salary.payment_period_end.strftime('%m/%d') }}</td>
+        <td>{{ salary.notes or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="10">No salary records found</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+document.getElementById('staffType').addEventListener('change', function() {
+  const staffType = this.value;
+  const staffIdSelect = document.getElementById('staffId');
+  
+  // Clear current options
+  staffIdSelect.innerHTML = '<option value="">Select Staff Member</option>';
+  
+  if (staffType) {
+    // This would need to be populated dynamically with AJAX in a real app
+    // For now, we'll use the data passed from the template
+    let staffList = [];
+    
+    if (staffType === 'doctor') {
+      {% for doctor in doctors %}
+        staffList.push({id: {{ doctor.id }}, name: '{{ doctor.name }}'});
+      {% endfor %}
+    } else if (staffType === 'nurse') {
+      {% for nurse in nurses %}
+        staffList.push({id: {{ nurse.id }}, name: '{{ nurse.name }}'});
+      {% endfor %}
+    } else if (staffType === 'pharmacist') {
+      {% for pharmacist in pharmacists %}
+        staffList.push({id: {{ pharmacist.id }}, name: '{{ pharmacist.name }}'});
+      {% endfor %}
+    } else if (staffType === 'worker') {
+      {% for worker in workers %}
+        staffList.push({id: {{ worker.id }}, name: '{{ worker.name }}'});
+      {% endfor %}
+    }
+    
+    staffList.forEach(function(staff) {
+      const option = document.createElement('option');
+      option.value = staff.id;
+      option.textContent = staff.name;
+      staffIdSelect.appendChild(option);
+    });
+  }
+});
+
+// Set default dates
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date();
+  const paymentDate = document.querySelector('input[name="payment_date"]');
+  const periodStart = document.querySelector('input[name="payment_period_start"]');
+  const periodEnd = document.querySelector('input[name="payment_period_end"]');
+  
+  if (paymentDate) paymentDate.valueAsDate = today;
+  
+  // Set period to current month
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  
+  if (periodStart) periodStart.valueAsDate = firstDay;
+  if (periodEnd) periodEnd.valueAsDate = lastDay;
+});
+</script>
+
+{% endblock %}

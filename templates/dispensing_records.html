@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Dispensing Records</h2>
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <select name="prescription_id" class="form-select" required>
+      <option value="">Select Prescription</option>
+      {% for p in prescriptions %}
+        <option value="{{ p.id }}">{{ p.patient.first_name }} {{ p.patient.last_name }} - {{ p.medication.name }} ({{ p.dosage }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="pharmacist_id" class="form-select" required>
+      <option value="">Select Pharmacist</option>
+      {% for ph in pharmacists %}
+        <option value="{{ ph.id }}">{{ ph.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-1">
+    <input name="quantity_dispensed" type="number" class="form-control" placeholder="Qty" value="1" required>
+  </div>
+  <div class="col-md-3">
+    <input name="notes" class="form-control" placeholder="Notes">
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary">Record Dispensing</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Patient</th><th>Medication</th><th>Pharmacist</th><th>Qty Dispensed</th><th>Date</th><th>Notes</th></tr></thead>
+  <tbody>
+    {% for r in records %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.prescription.patient.first_name }} {{ r.prescription.patient.last_name }}</td>
+        <td>{{ r.prescription.medication.name }} ({{ r.prescription.dosage }})</td>
+        <td>{{ r.pharmacist.name }}</td>
+        <td>{{ r.quantity_dispensed }}</td>
+        <td>{{ r.dispensed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ r.notes or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7">No dispensing records</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

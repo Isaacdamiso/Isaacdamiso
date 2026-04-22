@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Workload{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Doctor Workload</h1>
+    <p class="text-muted">Appointment count per doctor</p>
+    
+    {% if workload %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Doctor ID</th>
+                    <th>Doctor Name</th>
+                    <th>Specialty</th>
+                    <th>Department</th>
+                    <th>Total Appointments</th>
+                    <th>Upcoming Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in workload %}
+                <tr>
+                    <td>{{ doc.doctor_id }}</td>
+                    <td><strong>{{ doc.doctor_name }}</strong></td>
+                    <td>{{ doc.specialty or 'N/A' }}</td>
+                    <td>
+                        {% if doc.department %}
+                        <span class="badge bg-primary">{{ doc.department }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if doc.total_appointments > 0 %}
+                        <span class="badge bg-info">{{ doc.total_appointments }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">0</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if doc.upcoming_appointments and doc.upcoming_appointments > 0 %}
+                        <span class="badge bg-warning">{{ doc.upcoming_appointments }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">0</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No doctors found.</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>General Workers</h2>
+
+<!-- Search Form -->
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <input name="search" class="form-control" placeholder="Search by name or phone..." value="{{ search_query }}">
+  </div>
+  <div class="col-md-2">
+    <input name="position" class="form-control" placeholder="Filter by position..." value="{{ search_position }}">
+  </div>
+  <div class="col-md-3">
+    <select name="department" class="form-select">
+      <option value="">All Departments</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}" {% if dept.id|string == search_dept %}selected{% endif %}>{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Search</button>
+    <a href="{{ url_for('main.workers') }}" class="btn btn-outline-info w-100 mt-2">Clear</a>
+  </div>
+</form>
+
+<!-- Add Worker Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <input name="name" class="form-control" placeholder="Worker name" required>
+  </div>
+  <div class="col-md-2">
+    <input name="position" class="form-control" placeholder="Position" required>
+  </div>
+  <div class="col-md-2">
+    <input name="phone" class="form-control" placeholder="Phone">
+  </div>
+  <div class="col-md-2">
+    <select name="department_id" class="form-select">
+      <option value="">Select Department</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}">{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Name</th><th>Position</th><th>Department</th><th>Phone</th></tr></thead>
+  <tbody>
+    {% for w in workers %}
+      <tr>
+        <td>{{ w.id }}</td>
+        <td>{{ w.name }}</td>
+        <td>{{ w.position }}</td>
+        <td>{{ w.department.name if w.department else '' }}</td>
+        <td>{{ w.phone or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No workers</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

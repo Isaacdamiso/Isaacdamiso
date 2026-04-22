@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Appointments</h2>
+
+<!-- Search Form -->
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <input name="patient" class="form-control" placeholder="Search patient..." value="{{ search_patient }}">
+  </div>
+  <div class="col-md-3">
+    <input name="doctor" class="form-control" placeholder="Search doctor..." value="{{ search_doctor }}">
+  </div>
+  <div class="col-md-4">
+    <input name="date" type="date" class="form-control" placeholder="Filter by date" value="{{ search_date }}">
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Search</button>
+    <a href="{{ url_for('main.appointments') }}" class="btn btn-outline-info w-100 mt-2">Clear</a>
+  </div>
+</form>
+
+<!-- Add Appointment Form -->
+<form method="post" class="row g-3 mb-4">
+  <div class="col-md-3">
+    <select name="patient_id" class="form-select" required>
+      <option value="">Select Patient</option>
+      {% for p in patients %}
+        <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select name="doctor_id" class="form-select" required>
+      <option value="">Select Doctor</option>
+      {% for d in doctors %}
+        <option value="{{ d.id }}">{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <input name="scheduled_at" type="datetime-local" class="form-control" required>
+  </div>
+  <div class="col-md-2">
+    <input name="notes" class="form-control" placeholder="Notes">
+  </div>
+  <div class="col-md-1">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date/Time</th><th>Notes</th></tr></thead>
+  <tbody>
+    {% for a in appointments %}
+      <tr>
+        <td>{{ a.id }}</td>
+        <td>{{ a.patient.first_name }} {{ a.patient.last_name }}</td>
+        <td>{{ a.doctor.name }}</td>
+        <td>{{ a.scheduled_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ a.notes or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No appointments</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
